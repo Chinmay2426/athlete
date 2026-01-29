@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thank You</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #e3f2fd;
+    padding: 50px;
+    text-align: center;
+  }
+  .container {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    display: inline-block;
+    max-width: 450px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  }
+  h1 { color: #1976d2; }
+  button {
+    margin-top: 20px;
+    padding: 15px 25px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    background: #1976d2;
+    color: white;
+    cursor: pointer;
+  }
+  button:hover { background: #1565c0; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Thank You for Registering!</h1>
+  <p>Your registration was successful.</p>
+  <button id="downloadReceipt">Download Receipt (PDF)</button>
+</div>
+
+<script>
+const { jsPDF } = window.jspdf;
+
+// Get registration data from localStorage
+const registrationData = JSON.parse(localStorage.getItem("registrationData") || "{}");
+
+document.getElementById('downloadReceipt').addEventListener('click', function() {
+    const doc = new jsPDF();
+
+    // ---------------- HEADER ----------------
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(20);
+    doc.text("Event Registration Receipt", 105, 20, null, null, "center");
+
+    // Header line
+    doc.setLineWidth(0.5);
+    doc.line(20, 25, 190, 25);
+
+    // Outer border
+    doc.setDrawColor(0);
+    doc.setLineWidth(0.5);
+    doc.rect(15, 30, 180, 70);
+
+    // Info section
+    const startX = 20;
+    let startY = 40;
+    const lineHeight = 10;
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.text("Participant & Event Details", startX, startY);
+
+    doc.setFont("helvetica", "normal");
+    doc.text(`Name: ${registrationData.first_name || ''} ${registrationData.last_name || ''}`, startX, startY + lineHeight);
+    doc.text(`Email: ${registrationData.email || ''}`, startX, startY + 2*lineHeight);
+    doc.text(`Event: ${registrationData.event_name || ''}`, startX, startY + 3*lineHeight);
+    doc.text(`Amount Paid: ${registrationData.amount || ''}`, startX, startY + 4*lineHeight);
+
+    // Footer
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 105, 105, null, null, "center");
+
+    // Save PDF
+    doc.save(`receipt_${registrationData.first_name || 'user'}_${registrationData.last_name || 'user'}.pdf`);
+});
+</script>
+
+</body>
+</html>

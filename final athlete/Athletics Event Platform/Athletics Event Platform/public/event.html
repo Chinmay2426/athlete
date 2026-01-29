@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create New Event</title>
+<style>
+  body {
+  font-family: Arial, sans-serif;
+  background: #f3f4f6;
+  margin: 0;
+  padding: 0;
+  font-size: 16px; /* or 17px / 18px */
+}
+.container { max-width: 650px; margin: 40px auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+  h2 { margin:0 0 10px 0; }
+  label { font-weight: 600; margin-top: 12px; display: block; }
+  input, select, textarea { width: 100%; padding: 10px; margin-top: 5px; border-radius: 6px; border: 1px solid #ccc; }
+  button { margin-top: 20px; padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; }
+  .btn-primary { background: #2563eb; color: white; }
+  .btn-primary:hover { background: #1d4ed8; }
+  .btn-cancel { background: #e5e7eb; }
+  .row { display: flex; gap: 16px; }
+  .row .field { flex:1; display:flex; flex-direction:column; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Create New Event</h2>
+
+  <form id="createEventForm" enctype="multipart/form-data">
+
+    <!-- Event Name & Category -->
+    <div class="row">
+      <div class="field">
+        <label>Event Name</label>
+        <input type="text" name="name" placeholder="City Marathon 2026" required>
+      </div>
+      <div class="field">
+        <label>Category</label>
+        <select name="category" required>
+          <option value="">Select</option>
+          <option>Marathon</option>
+          <option>Half Marathon</option>
+          <option>Cyclothon</option>
+          <option>Triathlon</option>
+          <option>Trail Run</option>
+          <option>Charity event</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Start & End Date -->
+    <div class="row">
+      <div class="field">
+        <label>Start Date</label>
+        <input type="date" name="start_date" required>
+      </div>
+      <div class="field">
+        <label>End Date</label>
+        <input type="date" name="end_date" required>
+      </div>
+    </div>
+
+    <!-- Start & End Time -->
+    <div class="row">
+      <div class="field">
+        <label>Start Time</label>
+        <input type="time" name="start_time" required>
+      </div>
+      <div class="field">
+        <label>End Time</label>
+        <input type="time" name="end_time" required>
+      </div>
+    </div>
+
+    <!-- Location -->
+    <label>Location</label>
+    <input type="text" name="location" placeholder="New York, USA" required>
+
+    <!-- Distance & Max Participants -->
+    <div class="row">
+      <div class="field">
+        <label>Distance</label>
+        <input type="text" name="distance" placeholder="42.2 km">
+      </div>
+      <div class="field">
+        <label>Max Participants</label>
+        <input type="number" name="max_participants" placeholder="5000">
+      </div>
+    </div>
+
+    <!-- Fee -->
+    <label>Registration Fee (USD)</label>
+    <input type="number" name="fee" placeholder="75">
+
+    <!-- Banner -->
+    <label>Event Banner</label>
+    <input type="file" name="image" accept="image/*">
+
+    <!-- Description -->
+    <label>Description</label>
+    <textarea name="description" rows="3" placeholder="Describe your event..."></textarea>
+
+    <!-- Buttons -->
+    <div style="display:flex; gap:12px;">
+      <button type="button" class="btn-cancel" onclick="form.reset()">Cancel</button>
+      <button type="submit" class="btn-primary">Create Event</button>
+    </div>
+
+  </form>
+</div>
+<!-- <div id="eventList"></div> -->
+
+<!-- <script>
+fetch("http://127.0.0.1:8000/api/approved-events/")
+  .then(res => res.json())
+  .then(events => {
+    const container = document.getElementById("eventList");
+
+    if (events.length === 0) {
+      container.innerHTML = "<p>No events available</p>";
+      return;
+    }
+
+    container.innerHTML = events.map(event => `
+      <div class="event-card">
+        <img src="${event.imageUrl}" alt="${event.title}">
+        <h3>${event.title}</h3>
+        <p>${event.location}</p>
+        <p>${event.date}</p>
+        <p>Fee: $${event.price}</p>
+      </div>
+    `).join("");
+  })
+  .catch(err => console.error(err));
+</script> -->
+
+
+<script>
+document.getElementById('createEventForm').addEventListener('submit', async (e) => {
+    e.preventDefault(); // prevent default form submission
+
+    const form = e.target;
+    const formData = new FormData(form);
+
+    try {
+        const response = await fetch('http://127.0.0.1:8000/api/create-event/', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.status === 'success') {
+            // Redirect to frontend thank-you page
+            window.location.href = 'thank_you.html'; // <-- your thank-you page
+        } else {
+            alert('Error: ' + (data.message || 'Unknown error'));
+        }
+
+    } catch (err) {
+        console.error(err);
+        alert('Request failed: ' + err.message);
+    }
+});
+</script>
+
+
+</body>
+</html>
