@@ -1,1 +1,13 @@
-.config/
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Django
+db.sqlite3
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
