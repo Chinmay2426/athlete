@@ -1,0 +1,74 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Event Details</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<div id="app" class="container py-8"></div>
+
+<script type="module">
+import { mockEvents } from "./data.js";
+
+const params = new URLSearchParams(window.location.search);
+const eventId = params.get("id");
+
+const event = mockEvents.find(ev => ev.id === eventId);
+const app = document.getElementById("app");
+
+if (!event) {
+    app.innerHTML = "<p>Event not found</p>";
+} else {
+    app.innerHTML = `
+        <h1 class="text-2xl font-bold mb-4">${event.title}</h1>
+
+        <img src="${event.imageUrl}" alt="${event.title}" class="w-full max-w-lg rounded mb-4">
+
+        <p><strong>Description:</strong> ${event.description}</p>
+        <p><strong>Date:</strong> ${event.date}</p>
+        <p><strong>Location:</strong> ${event.location}</p>
+        <p><strong>Category:</strong> ${event.category}</p>
+        <p><strong>Participants:</strong> ${event.participants} / ${event.maxParticipants}</p>
+        <p><strong>Price:</strong> ${event.price} ${event.currency}</p>
+
+        ${event.distances?.length ? `
+            <p><strong>Distances:</strong> ${event.distances.map(d => d.label).join(", ")}</p>
+        ` : ""}
+
+        <button class="register-btn" onclick="goToRegister()">
+    Register Now
+</button>
+
+    `;
+}
+
+window.goToRegister = function () {
+    window.location.href = `register.html?id=${eventId}`;
+};
+</script>
+
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Event Details</title>
+  <meta charset="UTF-8" />
+</head>
+<body style="background:#f3f4f6;margin:0">
+  <div id="app"></div>
+
+  <script type="module">
+    import { renderEventDetails } from "./js/event-details.js";
+
+    const params = new URLSearchParams(window.location.search);
+    const eventId = params.get("id");
+
+    renderEventDetails(document.getElementById("app"), eventId);
+  </script>
+</body>
+</html>

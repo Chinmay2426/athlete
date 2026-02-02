@@ -1,0 +1,161 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Event Registration</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  body { font-family: sans-serif; background: #e3f2fd; margin: 0; padding: 0; }
+  .container { max-width: 500px; margin: 60px auto; background: white; padding: 30px 40px; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+  h1 { text-align: center; color: #1976d2; }
+  label { display: block; margin-top: 15px; font-weight: 600; }
+  input, select, textarea { width: 100%; padding: 10px; margin-top: 5px; border-radius: 6px; border: 1.5px solid #90caf9; }
+  button { margin-top: 20px; width: 100%; padding: 15px; border: none; border-radius: 8px; background: #1976d2; color: white; font-size: 16px; cursor: pointer; }
+  button:hover { background: #1565c0; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Event Registration</h1>
+  <form id="registrationForm" method="post">
+    <label>First Name</label><input type="text" name="first_name" required>
+    <label>Last Name</label><input type="text" name="last_name" required>
+    <label>Email</label><input type="email" name="email" required>
+    <label>Mobile</label><input type="tel" name="mobile" required>
+    <label>Gender</label>
+    <select name="gender" required>
+      <option value="">--Select--</option>
+      <option>Male</option>
+      <option>Female</option>
+      <option>Other</option>
+    </select>
+    <label>Event Name</label>
+    <select name="event_name" required>
+      <option value="">--Select--</option>
+      <option>Marathon</option>
+      <option>Mountain Trail Challenge</option>
+      <option>Coastal Triathlon Series</option>
+      <option>Urban Cycling Grand Prix</option>
+      <option>Spring 10k Fun Run</option>
+      <option>Desert Ultra Marathon</option>
+    </select>
+    <label>Amount</label><input type="text" name="amount">
+    <label>Emergency Contact</label><input type="tel" name="emergency_contact" required>
+    <label>Medical Condition</label><textarea name="medical_condition"></textarea>
+
+    <h4>💳 Payment Details</h4>
+
+        <label>Cardholder Name</label>
+        <input type="text" placeholder="Name on Card">
+
+        <label>Card Number</label>
+        <input type="text" maxlength="16" placeholder="XXXX XXXX XXXX XXXX">
+
+        <div class="flex-row">
+          <div>
+            <label>Expiry (MM/YY)</label>
+            <input type="text" placeholder="MM/YY">
+          </div>
+          <div>
+            <label>CVV</label>
+            <input type="password" maxlength="4">
+          </div>
+        </div>
+
+        <h4>📌 Or Pay via QR</h4>
+      <div class="optional-note">Scan using GPay / PhonePe / Paytm</div>
+
+    <!-- Show QR Button -->
+      <button type="button" class="btn" onclick="toggleQR()">Show QR Code</button>
+
+    <!-- QR Code (hidden initially) -->
+    <div id="qr-reader" style="display: none; text-align: center; margin-top: 15px;">
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=upi-demo-payment" alt="QR Code">
+    <p>UPI ID: demo@upi</p>
+    </div>
+
+    <button type="submit">Submit Registration</button>
+  </form>
+</div>
+
+<!-- <script>
+document.addEventListener("DOMContentLoaded", function() {
+  const form = document.getElementById('registrationForm');
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+
+    fetch('http://127.0.0.1:8000/api/register-event/', {
+      method: 'POST',
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === 'success') {
+        // Save the registration data locally for the thank-you page
+        const registrationData = Object.fromEntries(formData.entries());
+        localStorage.setItem("registrationData", JSON.stringify(registrationData));
+        
+        // Redirect to frontend thank-you page
+        window.location.href = 'thankyou.html';
+      } else {
+        alert("Error: " + data.error);
+      }
+    })
+    .catch(error => {
+      console.error("Fetch error:", error);
+      alert("Request failed. Check console for details.");
+    });
+  });
+});
+</script> -->
+<script>
+document.getElementById('registrationForm').addEventListener('submit', async (e) => {
+    e.preventDefault(); // prevent default form submit
+
+    const form = e.target;
+    const formData = new FormData(form);
+
+    try {
+        // Send to Django backend
+        const response = await fetch('http://127.0.0.1:8000/api/register-event/', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.status === 'success') {
+            // Save form data to localStorage for thank-you page (optional)
+            localStorage.setItem("registrationData", JSON.stringify(Object.fromEntries(formData.entries())));
+
+            // Redirect to frontend-only thank-you page
+            window.location.href = 'thankyou.html';
+        } else {
+            alert('Error: ' + (data.error || 'Unknown error'));
+        }
+
+    } catch (err) {
+        console.error("Request failed:", err);
+        alert('Request failed: ' + err.message);
+    }
+});
+</script>
+
+
+
+
+<script>
+function toggleQR() {
+    const qr = document.getElementById("qr-reader");
+    qr.style.display = qr.style.display === "block" ? "none" : "block";
+}
+</script>
+
+</body>
+</html>
